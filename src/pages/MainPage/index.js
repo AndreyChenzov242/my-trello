@@ -20,8 +20,8 @@ function MainPage() {
   const [currentTask, setCurrentTask] = useState();
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
-  const [pastHistory, setPastHistory] = React.useState([]);
-  const [futureHistory, setFutureHistory] = React.useState([]);
+  const [pastHistory, setPastHistory] = useState([]);
+  const [futureHistory, setFutureHistory] = useState([]);
 
   const updateHistory = () => {
     const newStep = { active: taskListActive, completed: taskListCompleted };
