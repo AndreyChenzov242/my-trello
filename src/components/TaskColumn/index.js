@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import List from "./List";
 import ReactIcon from "../ReactIcon";
 import { CgAddR } from "react-icons/cg";
+
 import "./styles.scss";
 
 function TaskColumn(props) {

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import TaskColumn from "../../components/TaskColumn";
 import { taskStatuses } from "../../constants/taskStatuses";
-import { v4 as uuidv4 } from "uuid";
 import ReactIcon from "../../components/ReactIcon";
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import Modal from "react-modal";
 import { DragDropContext } from "react-beautiful-dnd";
+import Modal from "react-modal";
+
 import "./styles.scss";
 
 function createTask(id, title, status) {
@@ -129,18 +130,18 @@ function MainPage() {
     closeModal();
   };
 
-  function openModal() {
+  const openModal = () => {
     setIsOpen(true);
-  }
+  };
 
-  function closeModal() {
+  const closeModal = () => {
     setIsOpen(false);
-  }
+  };
 
-  function onEditClick(task) {
+  const onEditClick = (task) => {
     openModal();
     setCurrentTask(task);
-  }
+  };
 
   const reorder = (arr, from, to) => {
     arr.splice(to, 0, arr.splice(from, 1)[0]);
