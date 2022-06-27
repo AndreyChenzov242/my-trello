@@ -2,8 +2,6 @@
 @import "../../../styles/colors.scss";
 
 .list {
-  margin-bottom: 16px;
-
   &__item {
     background-color: $white;
     border-radius: $border-radius;
@@ -19,6 +17,10 @@
       .actions-group {
         opacity: 1;
       }
+    }
+
+    &:last-child {
+      margin-bottom: 16px;
     }
   }
 
