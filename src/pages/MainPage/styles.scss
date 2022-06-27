@@ -1,0 +1,44 @@
+@import "../../styles/configs.scss";
+@import "../../styles/colors.scss";
+
+.container {
+  max-width: 650px;
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 24px;
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+  width: 300px;
+  height: 80px;
+  background-color: $white-dark;
+  border-radius: $border-radius;
+  padding: 8px;
+
+  .button-close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+  }
+
+  .input-wrapper {
+    margin-top: 8px;
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(50, 50, 50, 0.67);
+}

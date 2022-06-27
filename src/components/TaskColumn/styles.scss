@@ -1,0 +1,25 @@
+@import "../../styles/configs.scss";
+@import "../../styles/colors.scss";
+
+.task-list {
+  background-color: $white-dark;
+  border-radius: $border-radius;
+  overflow: hidden;
+
+  &__title {
+    color: $grey-4;
+    padding: 4px 0;
+  }
+
+  &__content {
+    padding: 8px;
+  }
+
+  .input-wrapper {
+    .add-icon {
+      &:hover {
+        color: $black;
+      }
+    }
+  }
+}

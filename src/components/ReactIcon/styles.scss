@@ -1,0 +1,43 @@
+@import "../../styles/colors.scss";
+
+.react-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &--size-xs {
+    font-size: 10px;
+  }
+
+  &--size-sm {
+    font-size: 12px;
+  }
+
+  &--size-md {
+    font-size: 16px;
+  }
+
+  &--size-lg {
+    font-size: 20px;
+  }
+
+  &--size-xl {
+    font-size: 26px;
+  }
+
+  &--size-xxl {
+    font-size: 32px;
+  }
+
+  &--size-xxxl {
+    font-size: 40px;
+  }
+
+  &--color-white {
+    color: #ffffff;
+  }
+
+  &--color-grey {
+    color: $grey-4;
+  }
+}

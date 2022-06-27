@@ -1,0 +1,44 @@
+@import "../../../styles/configs.scss";
+@import "../../../styles/colors.scss";
+
+.list {
+  margin-bottom: 16px;
+
+  &__item {
+    background-color: $white;
+    border-radius: $border-radius;
+    padding: 4px 70px 4px 8px;
+    margin-bottom: 4px;
+    position: relative;
+    transition: $anim-time background-color;
+    word-wrap: break-word;
+
+    &:hover {
+      background-color: $grey-3;
+
+      .actions-group {
+        opacity: 1;
+      }
+    }
+  }
+
+  .actions-group {
+    display: flex;
+    position: absolute;
+    right: 12px;
+    top: 0;
+    bottom: 0;
+    opacity: 0;
+    transition: $anim-time opacity;
+
+    & > button:first-child {
+      margin-right: 8px;
+    }
+
+    &__icon {
+      &:hover {
+        color: $black;
+      }
+    }
+  }
+}
