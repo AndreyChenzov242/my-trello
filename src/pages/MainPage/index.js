@@ -18,45 +18,52 @@ function MainPage() {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [currentTask, setCurrentTask] = useState();
   const [newTaskTitle, setNewTaskTitle] = useState("");
-  const [history, setHistory] = useState([]);
-  const [historyIndex, setHistoryIndex] = useState(0);
-  const [firstLoad, setFirstLoad] = useState(true);
 
-  useEffect(() => {
-    if (!firstLoad) {
-      setFirstLoad(false);
-      return;
-    }
+  const [pastHistory, setPastHistory] = React.useState([]);
+  const [futureHistory, setFutureHistory] = React.useState([]);
 
-    setHistory([
-      ...history,
-      { active: taskListActive, completed: taskListCompleted },
-    ]);
-
-    if (history.length > 0) {
-      setHistoryIndex(historyIndex + 1);
-    }
-  }, [taskListActive, taskListCompleted]);
-
-  useEffect(() => {
-    console.log("history", history);
-  }, [history]);
-
-  useEffect(() => {
-    console.log("historyIndex", historyIndex);
-  }, [historyIndex]);
+  const updateHistory = () => {
+    const newStep = { active: taskListActive, completed: taskListCompleted };
+    setPastHistory((pastHistory) => [...pastHistory, newStep]);
+    setFutureHistory([]);
+  };
 
   const undo = () => {
-    setHistoryIndex(historyIndex - 1);
+    if (pastHistory.length > 0) {
+      const previousStep = pastHistory[pastHistory.length - 1];
+      setTaskListActive(previousStep.active);
+      setTaskListCompleted(previousStep.completed);
+
+      setPastHistory((pastHistory) => pastHistory.slice(0, -1));
+      setFutureHistory((futureHistory) => [
+        ...futureHistory,
+        { active: taskListActive, completed: taskListCompleted },
+      ]);
+    }
+  };
+
+  const redo = () => {
+    if (futureHistory.length > 0) {
+      const futureStep = futureHistory[futureHistory.length - 1];
+      setTaskListActive(futureStep.active);
+      setTaskListCompleted(futureStep.completed);
+
+      setPastHistory((pastHistory) => [
+        ...pastHistory,
+        { active: taskListActive, completed: taskListCompleted },
+      ]);
+      setFutureHistory((futureHistory) => futureHistory.slice(0, -1));
+    }
   };
 
   const detectKeyDown = (e) => {
     if (e.keyCode === 90 && e.ctrlKey) {
-      console.log("ctrl+z");
       undo();
+      e.preventDefault();
     }
-    if (e.keyCode === 88 && e.ctrlKey) {
-      console.log("ctrl+y");
+    if (e.keyCode === 89 && e.ctrlKey) {
+      redo();
+      e.preventDefault();
     }
   };
 
@@ -75,14 +82,17 @@ function MainPage() {
   }, [currentTask]);
 
   const addTask = (title, status) => {
+    const newTask = createTask(uuidv4(), title, status);
+
     if (status === taskStatuses.completed) {
-      const newTask = createTask(uuidv4(), title, status);
-      setTaskListCompleted([...taskListCompleted, newTask]);
-      return;
+      const desiredTaskList = [...taskListCompleted, newTask];
+      setTaskListCompleted(desiredTaskList);
+    } else {
+      const desiredTaskList = [...taskListActive, newTask];
+      setTaskListActive(desiredTaskList);
     }
 
-    const newTask = createTask(uuidv4(), title, status);
-    setTaskListActive([...taskListActive, newTask]);
+    updateHistory();
   };
 
   const removeTask = (id, status) => {
@@ -91,11 +101,12 @@ function MainPage() {
         (task) => task.id !== id
       );
       setTaskListCompleted(desiredTaskList);
-      return;
+    } else {
+      const desiredTaskList = taskListActive.filter((task) => task.id !== id);
+      setTaskListActive(desiredTaskList);
     }
 
-    const desiredTaskList = taskListActive.filter((task) => task.id !== id);
-    setTaskListActive(desiredTaskList);
+    updateHistory();
   };
 
   const editTask = (id, status, newTask) => {
@@ -114,6 +125,7 @@ function MainPage() {
       setTaskListActive(desiredTaskList);
     }
 
+    updateHistory();
     closeModal();
   };
 
@@ -135,7 +147,7 @@ function MainPage() {
   };
 
   const move = (arr, to, item) => {
-    return arr.splice(to, 0, item);
+    arr.splice(to, 0, item);
   };
 
   const onChange = (event) => {
@@ -154,45 +166,54 @@ function MainPage() {
       }
 
       if (source.droppableId === taskStatuses.completed) {
-        reorder(taskListCompleted, source.index, destination.index);
-        setTaskListCompleted([...taskListCompleted]);
-        return;
+        const desiredTaskList = [...taskListCompleted];
+        reorder(desiredTaskList, source.index, destination.index);
+        setTaskListCompleted(desiredTaskList);
+      } else {
+        const desiredTaskList = [...taskListActive];
+        reorder(desiredTaskList, source.index, destination.index);
+        setTaskListActive(desiredTaskList);
       }
-
-      reorder(taskListActive, source.index, destination.index);
-      setTaskListActive([...taskListActive]);
     } else {
       if (source.droppableId === taskStatuses.completed) {
         const task = taskListCompleted.find((task) => task.id === draggableId);
 
-        move(taskListActive, destination.index, {
+        const desiredActive = [...taskListActive];
+        const desiredCompleted = [...taskListCompleted];
+
+        move(desiredActive, destination.index, {
           ...task,
           status: taskStatuses.active,
         });
-        taskListCompleted.splice(source.index, 1);
+        desiredCompleted.splice(source.index, 1);
 
-        setTaskListActive([...taskListActive]);
-        setTaskListCompleted([...taskListCompleted]);
+        setTaskListActive(desiredActive);
+        setTaskListCompleted(desiredCompleted);
       } else {
         const task = taskListActive.find((task) => task.id === draggableId);
 
-        move(taskListCompleted, destination.index, {
+        const desiredActive = [...taskListActive];
+        const desiredCompleted = [...taskListCompleted];
+
+        move(desiredCompleted, destination.index, {
           ...task,
           status: taskStatuses.completed,
         });
-        taskListActive.splice(source.index, 1);
+        desiredActive.splice(source.index, 1);
 
-        setTaskListActive([...taskListActive]);
-        setTaskListCompleted([...taskListCompleted]);
+        setTaskListActive(desiredActive);
+        setTaskListCompleted(desiredCompleted);
       }
     }
+
+    updateHistory();
   };
 
   return (
     <div className="container">
       <DragDropContext onDragEnd={onDragEnd}>
         <TaskColumn
-          taskList={history[historyIndex]?.active}
+          taskList={taskListActive}
           status={taskStatuses.active}
           addTask={addTask}
           removeTask={removeTask}
@@ -200,7 +221,7 @@ function MainPage() {
         />
 
         <TaskColumn
-          taskList={history[historyIndex]?.completed}
+          taskList={taskListCompleted}
           status={taskStatuses.completed}
           addTask={addTask}
           removeTask={removeTask}

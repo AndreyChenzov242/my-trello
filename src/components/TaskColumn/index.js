@@ -30,7 +30,16 @@ function TaskColumn(props) {
           onEditClick={onEditClick}
         />
         <div className="input-wrapper">
-          <input type="text" value={inputValue} onChange={onChange} />
+          <input
+            type="text"
+            value={inputValue}
+            onChange={onChange}
+            onKeyDown={(e) => {
+              if (e.keyCode === 13) {
+                onAdd();
+              }
+            }}
+          />
           <button onClick={onAdd}>
             <ReactIcon size="xl" color="grey" className="add-icon">
               <CgAddR />
